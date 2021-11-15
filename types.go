@@ -7,10 +7,18 @@ const (
 	DefaultCertFile    = "cert.pem"
 	DefaultCertKeyFile = "key.pem"
 	DefaultCACertFile  = "ca.pem"
+	DefaultNewCertFile = "newcert.pem"
+	DefaultNewKeyFile  = "newkey.pem"
+
+	PEMTypeCertificate = "CERTIFICATE"
+	PEMTypePrivateKey  = "PRIVATE KEY"
 )
 
 type Config struct {
-	HostName, CertFile, CertKeyFile, CACertFile string
-	Port                                        int
-	Timeout                                     time.Duration
+	HostName                    string
+	CertFile, CertKeyFile       string
+	NewCertFile, NewCertKeyFile string
+	CACertFile                  string
+	Port                        int
+	Timeout                     time.Duration
 }
