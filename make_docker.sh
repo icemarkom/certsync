@@ -1,14 +1,14 @@
 #!/bin/bash
 
 docker buildx build \
-  -f server.Dockerfile \
+  --target server \
   -t icemarkom/certsync-server \
   --platform=linux/amd64,linux/arm64,linux/arm \
   --push \
   .
 
 docker buildx build \
-  -f client.Dockerfile \
+  --target client \
   -t icemarkom/certsync-server \
   --platform=linux/amd64,linux/arm64,linux/arm \
   --push \
