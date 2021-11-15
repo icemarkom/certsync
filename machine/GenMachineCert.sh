@@ -8,6 +8,7 @@ CACert="${CAPath}/rzCA.crt"
 CAKey="${CAPath}/rzCA.key"
 OPENSSL="/usr/bin/openssl"
 LOOKUPTOOL="/usr/bin/host"
+MKTEMP="/bin/mktemp"
 
 DURATION=365
 
@@ -27,6 +28,32 @@ if [[ $? -ne 0 ]]; then
     exit 42
 fi
 
+CFGFile="$(${MKTEMP} --tmpdir cfg-XXXXX)"
+
+cat > ${CFGFile} << EOF
+[ req ]
+default_bits       = 2048
+distinguished_name = req_distinguished_name
+x509_extensions    = x509_ext
+prompt             = no
+
+[ req_distinguished_name ]
+C                  = US
+ST                 = California
+L                  = Los Gatos
+O                  = Rezidencija
+OU                 = Machine
+CN                 = ${MachineName}
+
+[ x509_ext ]
+subjectAltName     = @alt_names
+keyUsage           = keyEncipherment, dataEncipherment
+extendedKeyUsage   = clientAuth
+
+[ alt_names ]
+DNS.1              = ${MachineName}
+EOF
+
 MachineKey="${MachineName}.key"
 MachineCSR="${MachineName}.csr"
 MachineCert="${MachineName}.crt"
@@ -37,19 +64,22 @@ ${OPENSSL} req \
   -newkey rsa:2048 \
   -keyout "${MachineKey}" \
   -out "${MachineCSR}" \
-  -subj "/C=US/ST=CA/L=Los Gatos/O=Rezidencija/OU=Machine/CN=${MachineName}"
+  -config "${CFGFile}"
 if [[ $? -ne 0 ]]; then
   echo "Certificate '${MachineCSR}' and/or key '${MachineKey}' generation failed." > /dev/stderr
   exit 42
 fi
 
-sudo ${OPENSSL} x509 -req \
+sudo ${OPENSSL} x509 \
+  -req \
   -days "${DURATION}" \
   -in "${MachineCSR}" \
   -CA "${CACert}"  \
   -CAkey "${CAKey}" \
   -set_serial "$(date '+%Y%m%d%H%M%S')" \
-  -out "${MachineCert}"
+  -out "${MachineCert}" \
+  -extensions x509_ext \
+  -extfile ${CFGFile}
 if [[ $? -ne 0 ]]; then
   echo "Certificate '${MachineCert}' signing failed." > /dev/stderr
   exit 42
@@ -61,7 +91,7 @@ if [[ $? -ne 0 ]]; then
   exit 42
 fi
 
-rm -f "${MachineCSR}" "${MachineKey}" "${MachineCert}"
+rm -f "${MachineCSR}" "${MachineKey}" "${MachineCert}" "${CFGFile}"
 if [[ $? -ne 0 ]]; then
   echo "Could not remove temporary/intermediate files." > /dev/stderr
   exit 42
