@@ -1,25 +1,25 @@
-FROM --platform=${BUILDPLATFORM} golang:alpine AS builder
+FROM golang:alpine AS builder
 # Builder Image
 WORKDIR /certsync
 COPY . .
-ARG TARGETOS
-ARG TARGETARCH
 RUN apk --no-cache add ca-certificates
-RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o certsync_server server/*.go
-RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o certsync_client client/*.go
+RUN go build -o certsync:server server/*.go
+RUN go build -o certsync:client client/*.go
 
 # Server Image
-FROM --platform=${TARGETPLATFORM} alpine:latest AS server
-# RUN apt-get update && apt-get install --yes ca-certificates
+FROM alpine:latest AS server
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=builder /certsync/certsync_server /
-ENTRYPOINT ["certsync_server"]
+COPY --from=builder /certsync/certsync:server /
+WORKDIR /
+ENV PATH "/"
+ENTRYPOINT ["certsync:server"]
 CMD ["--help"]
 
 # Client Image
-FROM --platform=${TARGETPLATFORM} alpine:latest AS client
-# RUN apt-get update && apt-get install --yes ca-certificates
+FROM alpine:latest AS client
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=builder /certsync/certsync_client /
-ENTRYPOINT ["certsync_client"]
+COPY --from=builder /certsync/certsync:client /
+WORKDIR /
+ENV PATH "/"
+ENTRYPOINT ["certsync:client"]
 CMD ["--help"]
