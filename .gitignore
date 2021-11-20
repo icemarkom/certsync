@@ -2,3 +2,7 @@
 *.crt
 *.key
 *.pem
+
+.vscode
+certsync_client
+certsync_server
