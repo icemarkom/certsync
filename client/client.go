@@ -17,10 +17,17 @@ import (
 	cs "github.com/icemarkom/certsync"
 )
 
-var cfg cs.Config
+var (
+	cfg cs.Config
+
+	version, gitHash string
+)
 
 func init() {
-	var t int
+	var v bool
+
+	cfg.Version = version
+	cfg.GitHash = gitHash
 
 	flag.StringVar(&cfg.HostName, "host", "", "Server hostname")
 	flag.IntVar(&cfg.Port, "port", cs.DefaultPort, "Server port")
@@ -28,10 +35,14 @@ func init() {
 	flag.StringVar(&cfg.CertKeyFile, "clientkey", cs.DefaultCertKeyFile, "Client private key file")
 	flag.StringVar(&cfg.NewCertFile, "newcert", cs.DefaultNewCertFile, "New certificate file")
 	flag.StringVar(&cfg.NewCertKeyFile, "newkey", cs.DefaultNewKeyFile, "New key file")
-	flag.IntVar(&t, "timeout", 30, "Server timeout in seconds")
+	flag.DurationVar(&cfg.Timeout, "timeout", 30*time.Second, "Server timeout in seconds")
+	flag.BoolVar(&v, "version", false, "Print version and exit.")
+
 	flag.Parse()
 
-	cfg.Timeout = time.Duration(t) * time.Second
+	if v {
+		log.Fatalf("Version: %s\nGit Hash: %s\n", cfg.Version, cfg.GitHash)
+	}
 
 	if cfg.HostName == "" {
 		log.Fatalf("Server hostname not specified.")

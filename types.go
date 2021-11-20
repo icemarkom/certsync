@@ -21,4 +21,5 @@ type Config struct {
 	CACertFile                  string
 	Port                        int
 	Timeout                     time.Duration
+	Version, GitHash            string
 }
