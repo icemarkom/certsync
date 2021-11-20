@@ -15,6 +15,7 @@ import (
 	"time"
 
 	cs "github.com/icemarkom/certsync"
+	"github.com/icemarkom/certsync/common"
 )
 
 var (
@@ -22,17 +23,6 @@ var (
 
 	binaryName, version, gitHash string
 )
-
-func printVersion() {
-	fmt.Fprintf(flag.CommandLine.Output(), "Version: %s\nGit Hash: %s\n", cfg.Version, cfg.GitHash)
-}
-
-func printUsage() {
-	fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n", cfg.BinaryName)
-	flag.PrintDefaults()
-	fmt.Fprintln(flag.CommandLine.Output())
-	printVersion()
-}
 
 func init() {
 	var v bool
@@ -44,7 +34,8 @@ func init() {
 		cfg.BinaryName = os.Args[0]
 	}
 
-	flag.Usage = printUsage
+	flag.Usage = func() { common.ProgramUsage(cfg) }
+
 	flag.StringVar(&cfg.HostName, "host", "", "Server hostname")
 	flag.IntVar(&cfg.Port, "port", cs.DefaultPort, "Server port")
 	flag.StringVar(&cfg.CertFile, "clientcert", cs.DefaultCertFile, "Client certificate file")
@@ -57,7 +48,7 @@ func init() {
 	flag.Parse()
 
 	if v {
-		printVersion()
+		common.ProgramVersion(cfg)
 		os.Exit(0)
 	}
 
