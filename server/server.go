@@ -13,24 +13,41 @@ import (
 	"time"
 
 	cs "github.com/icemarkom/certsync"
+	"github.com/icemarkom/certsync/common"
 )
 
 var (
 	cfg cs.Config
+
+	binaryName, version, gitHash string
 )
 
 func init() {
-	var t int
+	var v bool
+
+	cfg.Version = version
+	cfg.GitHash = gitHash
+	cfg.BinaryName = binaryName
+	if cfg.BinaryName == "" {
+		cfg.BinaryName = os.Args[0]
+	}
+
+	flag.Usage = func() { common.ProgramUsage(cfg) }
 
 	flag.StringVar(&cfg.HostName, "host", "", "Server hostname")
 	flag.IntVar(&cfg.Port, "port", cs.DefaultPort, "Server port")
 	flag.StringVar(&cfg.CertFile, "cert", cs.DefaultCertFile, "Certificate file")
 	flag.StringVar(&cfg.CertKeyFile, "key", cs.DefaultCertKeyFile, "Private key file")
 	flag.StringVar(&cfg.CACertFile, "ca", cs.DefaultCACertFile, "Client CA certificate file")
-	flag.IntVar(&t, "timeout", 30, "Server timeout in seconds")
+	flag.DurationVar(&cfg.Timeout, "timeout", 30*time.Second, "Server timeout.")
+	flag.BoolVar(&v, "version", false, "Print version and exit.")
+
 	flag.Parse()
 
-	cfg.Timeout = time.Duration(t) * time.Second
+	if v {
+		common.ProgramVersion(cfg)
+		os.Exit(0)
+	}
 
 	if cfg.HostName == "" {
 		h, err := os.Hostname()
