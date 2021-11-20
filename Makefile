@@ -5,17 +5,17 @@ all: client server
 
 docker_all: docker_server docker_client
 
-client: *.go client/*
+client: deps *.go client/*
 	go build \
-  		--ldflags "-X main.version=${version} -X main.gitHash=${githash}" \
+  		--ldflags "-X main.version=${version} -X main.gitHash=${githash} -X main.binaryName=certsync_client" \
     	-o certsync_client \
-		client/*.go
+		github.com/icemarkom/certsync/client
 
-server:
+server: deps *.go server/*
 	go build \
-  	--ldflags "-X main.version ${version} -X main.gitHash ${githash}" \
-    -o certsync_server \
-		client/
+  		--ldflags "-X main.version ${version} -X main.gitHash ${githash} -X main.binaryName=certsync_server" \
+    	-o certsync_server \
+		server/*.go
 
 docker_server:
 	docker buildx build \
@@ -32,3 +32,5 @@ docker_client:
 		--platform=linux/amd64,linux/arm64,linux/arm \
 		--push \
 		.
+
+deps: Makefile go.mod

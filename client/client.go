@@ -20,15 +20,30 @@ import (
 var (
 	cfg cs.Config
 
-	version, gitHash string
+	binaryName, version, gitHash string
 )
+
+func printVersion() {
+	fmt.Fprintf(flag.CommandLine.Output(), "\nVersion: %s\nGit Hash: %s\n", cfg.Version, cfg.GitHash)
+}
+
+func printUsage() {
+	fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n", cfg.BinaryName)
+	flag.PrintDefaults()
+	printVersion()
+}
 
 func init() {
 	var v bool
 
 	cfg.Version = version
 	cfg.GitHash = gitHash
+	cfg.BinaryName = binaryName
+	if cfg.BinaryName == "" {
+		cfg.BinaryName = os.Args[0]
+	}
 
+	flag.Usage = printUsage
 	flag.StringVar(&cfg.HostName, "host", "", "Server hostname")
 	flag.IntVar(&cfg.Port, "port", cs.DefaultPort, "Server port")
 	flag.StringVar(&cfg.CertFile, "clientcert", cs.DefaultCertFile, "Client certificate file")
@@ -41,11 +56,12 @@ func init() {
 	flag.Parse()
 
 	if v {
-		log.Fatalf("Version: %s\nGit Hash: %s\n", cfg.Version, cfg.GitHash)
+		printVersion()
+		os.Exit(0)
 	}
 
 	if cfg.HostName == "" {
-		log.Fatalf("Server hostname not specified.")
+		log.Fatalf("Server hostname not specified.\n\n")
 	}
 	if cfg.Port < 1 && cfg.Port > math.MaxInt16 {
 		log.Printf("Invalid port number: %d.", cfg.Port)
