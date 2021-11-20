@@ -24,12 +24,13 @@ var (
 )
 
 func printVersion() {
-	fmt.Fprintf(flag.CommandLine.Output(), "\nVersion: %s\nGit Hash: %s\n", cfg.Version, cfg.GitHash)
+	fmt.Fprintf(flag.CommandLine.Output(), "Version: %s\nGit Hash: %s\n", cfg.Version, cfg.GitHash)
 }
 
 func printUsage() {
 	fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n", cfg.BinaryName)
 	flag.PrintDefaults()
+	fmt.Fprintln(flag.CommandLine.Output())
 	printVersion()
 }
 
