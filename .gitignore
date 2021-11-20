@@ -4,5 +4,4 @@
 *.pem
 
 .vscode
-certsync_client
-certsync_server
+bin/

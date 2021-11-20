@@ -1,21 +1,29 @@
 version=`date "+%Y%m%d%H%M%S"`
 githash=`git rev-parse HEAD`
 
+# Does not make Docker -- use docker_all
 all: client server
 
-docker_all: docker_server docker_client
+#
+# Standalone binaries
+#
 
 client: deps *.go client/*
 	go build \
-  		--ldflags "-X main.version=${version} -X main.gitHash=${githash} -X main.binaryName=certsync_client" \
-    	-o certsync_client \
+  		--ldflags "-s -w -X main.version=${version} -X main.gitHash=${githash} -X main.binaryName=certsync_client" \
+    	-o bin/certsync_client \
 		github.com/icemarkom/certsync/client
 
 server: deps *.go server/*
 	go build \
-  		--ldflags "-X main.version ${version} -X main.gitHash ${githash} -X main.binaryName=certsync_server" \
-    	-o certsync_server \
+  		--ldflags "-s -w -X main.version=${version} -X main.gitHash=${githash} -X main.binaryName=certsync_server" \
+    	-o bin/certsync_server \
 		server/*.go
+
+#
+# Docker
+#
+docker_all: docker_server docker_client
 
 docker_server:
 	docker buildx build \
