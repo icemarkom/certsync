@@ -5,3 +5,5 @@
 
 .vscode
 bin/
+deb/
+tmp/
