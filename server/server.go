@@ -19,14 +19,14 @@ import (
 var (
 	cfg cs.Config
 
-	binaryName, version, gitHash string
+	binaryName, version, gitCommit string
 )
 
 func init() {
 	var v bool
 
 	cfg.Version = version
-	cfg.GitHash = gitHash
+	cfg.GitCommit = gitCommit
 	cfg.BinaryName = binaryName
 	if cfg.BinaryName == "" {
 		cfg.BinaryName = os.Args[0]

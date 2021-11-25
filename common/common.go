@@ -8,7 +8,7 @@ import (
 )
 
 func ProgramVersion(cfg cs.Config) {
-	fmt.Fprintf(flag.CommandLine.Output(), "Version: %s\nGit Hash: %s\n", cfg.Version, cfg.GitHash)
+	fmt.Fprintf(flag.CommandLine.Output(), "Version: %s\n Commit: %s\n", cfg.Version, cfg.GitCommit)
 }
 
 func ProgramUsage(cfg cs.Config) {

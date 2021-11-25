@@ -15,11 +15,11 @@ const (
 )
 
 type Config struct {
-	HostName                     string
-	CertFile, CertKeyFile        string
-	NewCertFile, NewCertKeyFile  string
-	CACertFile                   string
-	Port                         int
-	Timeout                      time.Duration
-	BinaryName, Version, GitHash string
+	HostName                       string
+	CertFile, CertKeyFile          string
+	NewCertFile, NewCertKeyFile    string
+	CACertFile                     string
+	Port                           int
+	Timeout                        time.Duration
+	BinaryName, Version, GitCommit string
 }
