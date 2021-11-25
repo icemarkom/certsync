@@ -1,5 +1,5 @@
 version=`date "+%Y%m%d%H%M%S"`
-githash=`git rev-parse HEAD`
+githash=`git rev-parse --short HEAD`
 
 # Does not make Docker -- use docker_all
 all: client server
