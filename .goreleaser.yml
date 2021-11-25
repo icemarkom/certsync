@@ -2,7 +2,6 @@ before:
   hooks:
     - go mod tidy
 
-# --ldflags "-s -w -X main.version=${version} -X main.gitHash=${githash} -X main.binaryName=certsync_client" \
 builds:
   - id: server
     main: ./server
@@ -32,6 +31,7 @@ builds:
       - linux_arm64
       - linux_arm
       - windows_amd64
+
 archives:
   - id: server
     name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
@@ -40,6 +40,9 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
+    replacements:
+      arm: armhf
+  
   - id: client
     name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     builds:
@@ -47,6 +50,36 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
+    replacements:
+      arm: armhf
+  
+nfpms:
+  - id: server
+    maintainer: "Marko Milivojevic <markom@gmail.com>"
+    package_name: certsync_server
+    description: "CertSync server. See: https://github.com/icemarkom/certsync"
+    bindir: /usr/local/sbin
+    builds:
+      - server
+    formats:
+      - apk
+      - deb
+      - rpm
+    replacements:
+      arm: armhf
+  - id: client
+    maintainer: "Marko Milivojevic <markom@gmail.com>"
+    package_name: certsync_client
+    description: "CertSync client. See: https://github.com/icemarkom/certsync"
+    bindir: /usr/local/bin
+    builds:
+      - client
+    formats:
+      - apk
+      - deb
+      - rpm
+    replacements:
+      arm: armhf
 
 checksum:
   name_template: 'checksums.txt'
