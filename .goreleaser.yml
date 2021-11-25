@@ -16,7 +16,10 @@ builds:
       - linux_amd64
       - linux_arm64
       - linux_arm
+      - darwin_amd64
+      - darwin_arm64
       - windows_amd64
+      - windows_386
   - id: client
     main: ./client
     binary: certsync_client
@@ -30,7 +33,16 @@ builds:
       - linux_amd64
       - linux_arm64
       - linux_arm
+      - darwin_amd64
+      - darwin_arm64
       - windows_amd64
+      - windows_386
+
+universal_binaries:
+  - id: server
+    replace: true
+  - id: client
+    replace: true
 
 archives:
   - id: server
@@ -40,8 +52,11 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
+      - goos: darwin
+        format: zip
     replacements:
       arm: armhf
+      darwin: macOS
   
   - id: client
     name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
@@ -50,8 +65,11 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
+      - goos: darwin
+        format: zip
     replacements:
       arm: armhf
+      darwin: macOS
   
 nfpms:
   - id: server
@@ -62,9 +80,7 @@ nfpms:
     builds:
       - server
     formats:
-      - apk
       - deb
-      - rpm
     replacements:
       arm: armhf
   - id: client
@@ -75,9 +91,7 @@ nfpms:
     builds:
       - client
     formats:
-      - apk
       - deb
-      - rpm
     replacements:
       arm: armhf
 
