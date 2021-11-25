@@ -1,47 +1,58 @@
-# This is an example .goreleaser.yml file with some sensible defaults.
-# Make sure to check the documentation at https://goreleaser.com
 before:
   hooks:
-    # You may remove this if you don't use go modules.
     - go mod tidy
-    # you may remove this if you don't need go generate
-    # - go generate ./...
 
+# --ldflags "-s -w -X main.version=${version} -X main.gitHash=${githash} -X main.binaryName=certsync_client" \
 builds:
   - id: server
     main: ./server
     binary: certsync_server
-    goos:
-      - linux
+    ldflags:
+    - -s
+    - -w 
+    - -X main.version={{.Version}}
+    - -X main.gitCommit={{.ShortCommit}}
+    - -X main.binaryName={{.Binary}}
     targets:
       - linux_amd64
       - linux_arm64
       - linux_arm
+      - windows_amd64
   - id: client
     main: ./client
     binary: certsync_client
-    goos:
-       - linux
+    ldflags:
+    - -s
+    - -w 
+    - -X main.version={{.Version}}
+    - -X main.gitCommit={{.ShortCommit}}
+    - -X main.binaryName={{.Binary}}
     targets:
       - linux_amd64
       - linux_arm64
       - linux_arm
-
+      - windows_amd64
 archives:
   - id: server
     name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     builds:
       - server
+    format_overrides:
+      - goos: windows
+        format: zip
   - id: client
     name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     builds:
       - client
+    format_overrides:
+      - goos: windows
+        format: zip
 
 checksum:
   name_template: 'checksums.txt'
 
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  name_template: "{{ incpatch .Version }}-dev"
 
 changelog:
   use: github
@@ -49,3 +60,6 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+
+announce:
+  skip: "true"
