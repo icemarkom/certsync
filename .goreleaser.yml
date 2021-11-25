@@ -1,0 +1,50 @@
+# This is an example .goreleaser.yml file with some sensible defaults.
+# Make sure to check the documentation at https://goreleaser.com
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod tidy
+    # you may remove this if you don't need go generate
+    # - go generate ./...
+
+builds:
+  - id: server
+    main: ./server
+    binary: certsync_server
+    goos:
+      - linux
+    targets:
+      - linux_amd64
+      - linux_arm64
+      - linux_arm
+  - id: client
+    main: ./client
+    binary: certsync_client
+    goos:
+       - linux
+    targets:
+      - linux_amd64
+      - linux_arm64
+      - linux_arm
+
+archives:
+  - id: server
+    name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    builds:
+      - server
+  - id: client
+    name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    builds:
+      - client
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
