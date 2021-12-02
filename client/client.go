@@ -35,7 +35,7 @@ import (
 )
 
 var (
-	cfg cs.Config
+	cfg *cs.Config
 
 	binaryName, version, gitCommit string
 )
@@ -43,22 +43,17 @@ var (
 func init() {
 	var v bool
 
-	cfg.Version = version
-	cfg.GitCommit = gitCommit
-	cfg.BinaryName = binaryName
-	if cfg.BinaryName == "" {
-		cfg.BinaryName = os.Args[0]
-	}
+	cfg = cs.NewConfig(binaryName, version, gitCommit)
 
 	flag.Usage = func() { common.ProgramUsage(cfg) }
 
 	flag.StringVar(&cfg.HostName, "host", "", "Server hostname")
 	flag.IntVar(&cfg.Port, "port", cs.DefaultPort, "Server port")
 	flag.StringVar(&cfg.CertFile, "clientcert", cs.DefaultCertFile, "Client certificate file")
-	flag.StringVar(&cfg.CertKeyFile, "clientkey", cs.DefaultCertKeyFile, "Client private key file")
+	flag.StringVar(&cfg.CertKeyFile, "clientkey", cs.DefaultKeyFile, "Client private key file")
 	flag.StringVar(&cfg.NewCertFile, "newcert", cs.DefaultNewCertFile, "New certificate file")
 	flag.StringVar(&cfg.NewCertKeyFile, "newkey", cs.DefaultNewKeyFile, "New key file")
-	flag.DurationVar(&cfg.Timeout, "timeout", 30*time.Second, "Server timeout in seconds")
+	flag.DurationVar(&cfg.Timeout, "timeout", cs.DefaultTimeout*time.Second, "Server timeout in seconds")
 	flag.BoolVar(&v, "version", false, "Print version and exit.")
 
 	flag.Parse()
