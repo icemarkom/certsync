@@ -21,14 +21,32 @@ import "time"
 const (
 	DefaultPort        = 15000
 	DefaultCertFile    = "cert.pem"
-	DefaultCertKeyFile = "key.pem"
+	DefaultKeyFile     = "key.pem"
 	DefaultCACertFile  = "ca.pem"
 	DefaultNewCertFile = "newcert.pem"
 	DefaultNewKeyFile  = "newkey.pem"
+	DefaultTimeout     = 30
 
 	PEMTypeCertificate = "CERTIFICATE"
 	PEMTypePrivateKey  = "PRIVATE KEY"
 )
+
+func NewConfig(b, v, g string) *Config {
+	return &Config{
+
+		CertFile:       DefaultCertFile,
+		CertKeyFile:    DefaultKeyFile,
+		NewCertFile:    DefaultNewCertFile,
+		NewCertKeyFile: DefaultNewKeyFile,
+		CACertFile:     DefaultCACertFile,
+		Port:           DefaultPort,
+		Timeout:        DefaultTimeout * time.Second,
+		BinaryName:     b,
+		Version:        v,
+		GitCommit:      g,
+		Resolver:       &net.Resolver{},
+	}
+}
 
 type Config struct {
 	HostName                       string
