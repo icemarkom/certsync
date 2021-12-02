@@ -1,5 +1,5 @@
 version=`date "+%Y%m%d%H%M%S"`
-githash=`git rev-parse --short HEAD`
+gitcommit=`git rev-parse --short HEAD`
 
 # Does not make Docker -- use docker_all
 all: client server
@@ -9,13 +9,13 @@ all: client server
 #
 client: deps *.go client/*
 	go build \
-		--ldflags "-s -w -X main.version=${version} -X main.gitHash=${githash} -X main.binaryName=certsync_client" \
+		--ldflags "-s -w -X main.version=${version} -X main.gitCommit=${gitcommit} -X main.binaryName=certsync_client" \
 		-o bin/certsync_client \
 		github.com/icemarkom/certsync/client
 
 server: deps *.go server/*
 	go build \
-		--ldflags "-s -w -X main.version=${version} -X main.gitHash=${githash} -X main.binaryName=certsync_server" \
+		--ldflags "-s -w -X main.version=${version} -X main.gitCommit=${gitcommit} -X main.binaryName=certsync_server" \
 		-o bin/certsync_server \
 		server/*.go
 
