@@ -102,7 +102,7 @@ func setupServer() (*http.Server, error) {
 func validRequest(r *http.Request) bool {
 	cn := r.TLS.VerifiedChains[0][0].Subject.CommonName
 
-	_, err := cs.ValidateAddresses(cn, cs.IPFromRequest(r))
+	_, err := cs.ValidateAddresses(cfg, cn, cs.IPFromRequest(r))
 	if err != nil {
 		log.Printf("Client %q IPs did not validate: %v", cn, err)
 		return false

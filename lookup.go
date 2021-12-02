@@ -17,14 +17,15 @@
 package certsync
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"net/http"
 	"strings"
 )
 
-func validReverse(ip net.IP, host string) bool {
-	addrList, err := net.LookupAddr(ip.String())
+func validReverse(cfg *Config, ip net.IP, host string) bool {
+	addrList, err := cfg.Resolver.LookupAddr(context.Background(), ip.String())
 	if err != nil {
 		return false
 	}
@@ -36,15 +37,15 @@ func validReverse(ip net.IP, host string) bool {
 	return false
 }
 
-func ValidateAddresses(host string, hostAddr net.IP) (bool, error) {
-	addrList, err := LookupAddresses(host)
+func ValidateAddresses(cfg *Config, host string, hostAddr net.IP) (bool, error) {
+	addrList, err := LookupAddresses(cfg, host)
 	if err != nil {
 		return false, err
 	}
 	found := false
 	for _, addr := range addrList {
-		if hostAddr.Equal(addr) {
-			if validReverse(addr, host) {
+		if hostAddr.Equal(addr.IP) {
+			if validReverse(cfg, addr.IP, host) {
 				found = true
 				break
 			}
@@ -57,8 +58,8 @@ func ValidateAddresses(host string, hostAddr net.IP) (bool, error) {
 }
 
 // LookupAddresses ...
-func LookupAddresses(hostName string) ([]net.IP, error) {
-	a, err := net.LookupIP(hostName)
+func LookupAddresses(cfg *Config, hostName string) ([]net.IPAddr, error) {
+	a, err := cfg.Resolver.LookupIPAddr(context.Background(), hostName)
 	if err != nil {
 		return nil, err
 	}
