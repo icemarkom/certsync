@@ -16,7 +16,11 @@
 
 package certsync
 
-import "time"
+import (
+	"context"
+	"net"
+	"time"
+)
 
 const (
 	DefaultPort        = 15000
@@ -30,6 +34,12 @@ const (
 	PEMTypeCertificate = "CERTIFICATE"
 	PEMTypePrivateKey  = "PRIVATE KEY"
 )
+
+type Resolver interface {
+	LookupAddr(context.Context, string) ([]string, error)
+	LookupIPAddr(context.Context, string) ([]net.IPAddr, error)
+	LookupHost(context.Context, string) ([]string, error)
+}
 
 func NewConfig(b, v, g string) *Config {
 	return &Config{
@@ -56,4 +66,5 @@ type Config struct {
 	Port                           int
 	Timeout                        time.Duration
 	BinaryName, Version, GitCommit string
+	Resolver                       Resolver
 }
