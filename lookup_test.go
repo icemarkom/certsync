@@ -20,15 +20,17 @@ func setUp() *Config {
 			"mismatched.example.com.": {
 				A: []string{"10.0.0.2"},
 			},
-
+			"cname-for-valid.example.com.": {
+				CNAME: "valid.example.com.",
+			},
 			"1.0.0.10.in-addr.arpa.": {
-				PTR: []string{"valid.example.com"},
+				PTR: []string{"valid.example.com."},
 			},
 			"2.0.0.10.in-addr.arpa.": {
-				PTR: []string{"badly-mismatched.example.com"},
+				PTR: []string{"badly-mismatched.example.com."},
 			},
 			"1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.8.b.d.0.1.0.0.2.ip6.arpa.": {
-				PTR: []string{"valid.example.com"},
+				PTR: []string{"valid.example.com."},
 			},
 		},
 	}
@@ -142,6 +144,49 @@ func TestValidReverse(t *testing.T) {
 		got := validReverse(cfg, tc.ip, tc.host)
 		if got != tc.want {
 			t.Errorf("validReverse(%q, %q): want: %v, got: %v", tc.ip, tc.host, tc.want, got)
+		}
+	}
+}
+
+func TestValidateAddresses(t *testing.T) {
+	var tests = []struct {
+		host    string
+		ip      net.IP
+		wantErr bool
+	}{
+		{
+			host:    "",
+			ip:      nil,
+			wantErr: true,
+		},
+		{
+			host:    "invalid.example.com",
+			ip:      net.ParseIP("10.0.0.1"),
+			wantErr: true,
+		},
+		{
+			host:    "cname-for-valid.example.com",
+			ip:      net.ParseIP("10.0.0.1"),
+			wantErr: true,
+		},
+		{
+			host:    "valid.example.com",
+			ip:      net.ParseIP("10.0.0.1"),
+			wantErr: false,
+		},
+		{
+			host:    "valid.example.com",
+			ip:      net.ParseIP("2001:db8::1"),
+			wantErr: false,
+		},
+	}
+
+	cfg := setUp()
+
+	for _, tc := range tests {
+
+		if gotErr := ValidateAddresses(cfg, tc.host, tc.ip) != nil; gotErr != tc.wantErr {
+			t.Errorf("ValidateAddresses(%q, %q): want: %v, got: %v", tc.host, tc.ip, tc.wantErr, gotErr)
 		}
 	}
 }

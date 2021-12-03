@@ -42,19 +42,12 @@ func ValidateAddresses(cfg *Config, host string, hostAddr net.IP) error {
 	if err != nil {
 		return err
 	}
-	found := false
 	for _, addr := range addrList {
-		if hostAddr.Equal(addr.IP) {
-			if validReverse(cfg, addr.IP, host) {
-				found = true
-				break
-			}
+		if addr.IP.Equal(hostAddr) && validReverse(cfg, addr.IP, host) {
+			return nil
 		}
 	}
-	if !found {
-		return fmt.Errorf("address %q is not valid for host %q", hostAddr, host)
-	}
-	return nil
+	return fmt.Errorf("address %q is not valid for host %q", hostAddr, host)
 }
 
 // LookupAddresses ...
