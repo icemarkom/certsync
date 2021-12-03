@@ -113,6 +113,7 @@ func parsePEM(data []byte) ([]*pem.Block, error) {
 	}
 	return pemList, err
 }
+
 func savePEM(blocks []*pem.Block, fileName string, fileMode os.FileMode) (err error) {
 
 	f, err := os.OpenFile(fileName, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, fileMode)
