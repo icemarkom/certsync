@@ -38,7 +38,7 @@ func validReverse(cfg *Config, ip net.IP, host string) bool {
 }
 
 func ValidateAddresses(cfg *Config, host string, hostAddr net.IP) error {
-	addrList, err := LookupAddresses(cfg, host)
+	addrList, err := lookupAddresses(cfg, host)
 	if err != nil {
 		return err
 	}
@@ -58,7 +58,7 @@ func ValidateAddresses(cfg *Config, host string, hostAddr net.IP) error {
 }
 
 // LookupAddresses ...
-func LookupAddresses(cfg *Config, hostName string) ([]net.IPAddr, error) {
+func lookupAddresses(cfg *Config, hostName string) ([]net.IPAddr, error) {
 	a, err := cfg.Resolver.LookupIPAddr(context.Background(), hostName)
 	if err != nil {
 		return nil, err
