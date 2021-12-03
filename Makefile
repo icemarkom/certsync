@@ -41,3 +41,6 @@ docker_client:
 		.
 
 deps: Makefile go.mod
+
+test:
+	go test ./...
