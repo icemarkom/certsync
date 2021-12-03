@@ -43,7 +43,6 @@ type Resolver interface {
 
 func NewConfig(b, v, g string) *Config {
 	return &Config{
-
 		CertFile:       DefaultCertFile,
 		CertKeyFile:    DefaultKeyFile,
 		NewCertFile:    DefaultNewCertFile,
