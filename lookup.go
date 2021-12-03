@@ -37,26 +37,17 @@ func validReverse(cfg *Config, ip net.IP, host string) bool {
 	return false
 }
 
-func ValidateAddresses(cfg *Config, host string, hostAddr net.IP) error {
-	addrList, err := lookupAddresses(cfg, host)
+func ValidateAddresses(cfg *Config, hostName string, hostAddr net.IP) error {
+	addrList, err := cfg.Resolver.LookupIPAddr(context.Background(), hostName)
 	if err != nil {
-		return err
+		return fmt.Errorf("validation failed due to lookup failure: %v", err)
 	}
 	for _, addr := range addrList {
-		if addr.IP.Equal(hostAddr) && validReverse(cfg, addr.IP, host) {
+		if addr.IP.Equal(hostAddr) && validReverse(cfg, addr.IP, hostName) {
 			return nil
 		}
 	}
-	return fmt.Errorf("address %q is not valid for host %q", hostAddr, host)
-}
-
-// LookupAddresses ...
-func lookupAddresses(cfg *Config, hostName string) ([]net.IPAddr, error) {
-	a, err := cfg.Resolver.LookupIPAddr(context.Background(), hostName)
-	if err != nil {
-		return nil, err
-	}
-	return a, nil
+	return fmt.Errorf("address %q is not valid for host %q", hostAddr, hostName)
 }
 
 // IPFromRequest

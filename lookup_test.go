@@ -1,6 +1,7 @@
 package certsync
 
 import (
+	"errors"
 	"net"
 	"net/http"
 	"testing"
@@ -31,6 +32,18 @@ func setUp() *Config {
 			},
 			"1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.8.b.d.0.1.0.0.2.ip6.arpa.": {
 				PTR: []string{"valid.example.com."},
+			},
+		},
+	}
+	return cfg
+}
+
+func setupBadResolver() *Config {
+	cfg := NewConfig("test_binary", "test_version", "test_commit")
+	cfg.Resolver = &mockdns.Resolver{
+		Zones: map[string]mockdns.Zone{
+			"valid.example.com": {
+				Err: errors.New("error"),
 			},
 		},
 	}
@@ -184,9 +197,15 @@ func TestValidateAddresses(t *testing.T) {
 	cfg := setUp()
 
 	for _, tc := range tests {
-
 		if gotErr := ValidateAddresses(cfg, tc.host, tc.ip) != nil; gotErr != tc.wantErr {
 			t.Errorf("ValidateAddresses(%q, %q): want: %v, got: %v", tc.host, tc.ip, tc.wantErr, gotErr)
 		}
 	}
+
+	// Special case, when the resolver errors out.
+	cfg = setupBadResolver()
+	if gotErr := ValidateAddresses(cfg, "valid.example.com", net.ParseIP("10.0.0.1")) != nil; !gotErr {
+		t.Errorf("[resolver error case] ValidateAddresses(%q, %q): want: %v, got: %v", "valid.example.com", "10.0.0.1", true, gotErr)
+	}
+
 }
