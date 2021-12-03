@@ -2,6 +2,7 @@ package certsync
 
 import (
 	"net"
+	"net/http"
 	"testing"
 
 	"github.com/foxcpp/go-mockdns"
@@ -32,6 +33,69 @@ func setUp() *Config {
 		},
 	}
 	return cfg
+}
+
+func TestIPFromRequest(t *testing.T) {
+	var tests = []struct {
+		r       *http.Request
+		want    net.IP
+		wantErr bool
+	}{
+		{
+			r:       nil,
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			r: &http.Request{
+				RemoteAddr: "10.0.0.1",
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			r: &http.Request{
+				RemoteAddr: "2001:db8::1",
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			r: &http.Request{
+				RemoteAddr: "2001:db8::5000",
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			r: &http.Request{
+				RemoteAddr: "[2001:db8::1]",
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			r: &http.Request{
+				RemoteAddr: "[2001:db8::1]:5000",
+			},
+			want:    net.ParseIP("2001:db8::1"),
+			wantErr: false,
+		},
+		{
+			r: &http.Request{
+				RemoteAddr: "10.0.0.1:5000",
+			},
+			want:    net.ParseIP("10.0.0.1"),
+			wantErr: false,
+		},
+	}
+	for _, tc := range tests {
+		got, err := IPFromRequest(tc.r)
+		if !got.Equal(tc.want) || (err == nil && tc.wantErr) {
+			t.Errorf("IPFromRequest(%q): want: %v (got: %v), wantErr: %v (gotErr: %v)", tc.r.RemoteAddr, tc.want, got, tc.wantErr, err != nil)
+		}
+	}
+
 }
 
 func TestValidReverse(t *testing.T) {
