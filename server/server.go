@@ -99,15 +99,14 @@ func setupServer() (*http.Server, error) {
 	}, nil
 }
 
-func validRequest(r *http.Request) bool {
+func validRequest(r *http.Request) error {
 	cn := r.TLS.VerifiedChains[0][0].Subject.CommonName
+	ip, err := cs.IPFromRequest(r)
 
-	_, err := cs.ValidateAddresses(cfg, cn, cs.IPFromRequest(r))
 	if err != nil {
-		log.Printf("Client %q IPs did not validate: %v", cn, err)
-		return false
+		return err
 	}
-	return true
+	return cs.ValidateAddresses(cfg, cn, ip)
 }
 
 func logRequest(r *http.Request) {
@@ -117,8 +116,9 @@ func logRequest(r *http.Request) {
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
 	logRequest(r)
-	if !validRequest(r) {
+	if err := validRequest(r); err != nil {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		log.Printf("Client IPs did not validate: %v", err)
 		return
 	}
 	data, err := ioutil.ReadFile(cfg.CertFile)
