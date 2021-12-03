@@ -68,6 +68,9 @@ func LookupAddresses(cfg *Config, hostName string) ([]net.IPAddr, error) {
 
 // IPFromRequest
 func IPFromRequest(r *http.Request) net.IP {
+	if r == nil {
+		return nil
+	}
 	if r.Header.Get("X-Forwarded-For") != "" {
 		ip := net.ParseIP(strings.Split(r.Header.Get("X-Forwarded-For"), " ")[0])
 		return ip
