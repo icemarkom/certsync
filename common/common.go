@@ -23,10 +23,12 @@ import (
 	cs "github.com/icemarkom/certsync"
 )
 
+// ProgramVersion ...
 func ProgramVersion(cfg *cs.Config) {
 	fmt.Fprintf(flag.CommandLine.Output(), "Version: %s\n Commit: %s\n", cfg.Version, cfg.GitCommit)
 }
 
+// ProgramUsage ...
 func ProgramUsage(cfg *cs.Config) {
 	fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n", cfg.BinaryName)
 	flag.PrintDefaults()

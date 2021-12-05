@@ -37,6 +37,7 @@ func validReverse(cfg *Config, ip net.IP, host string) bool {
 	return false
 }
 
+// ValidateAddresses ...
 func ValidateAddresses(cfg *Config, hostName string, hostAddr net.IP) error {
 	addrList, err := cfg.Resolver.LookupIPAddr(context.Background(), hostName)
 	if err != nil {
@@ -50,7 +51,7 @@ func ValidateAddresses(cfg *Config, hostName string, hostAddr net.IP) error {
 	return fmt.Errorf("address %q is not valid for host %q", hostAddr, hostName)
 }
 
-// IPFromRequest
+// IPFromRequest ...
 func IPFromRequest(r *http.Request) (net.IP, error) {
 	if r == nil {
 		return nil, fmt.Errorf("requestor host:port is empty")
@@ -58,12 +59,12 @@ func IPFromRequest(r *http.Request) (net.IP, error) {
 	if r.Header.Get("X-Forwarded-For") != "" {
 		ip := net.ParseIP(strings.Split(r.Header.Get("X-Forwarded-For"), " ")[0])
 		return ip, nil
-	} else {
-		h, _, err := net.SplitHostPort(r.RemoteAddr)
-		if err != nil {
-			return nil, fmt.Errorf("invalid requestor host:port combination: %v", err)
-		}
-		ip := net.ParseIP(h)
-		return ip, nil
 	}
+
+	h, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		return nil, fmt.Errorf("invalid requestor host:port combination: %v", err)
+	}
+	ip := net.ParseIP(h)
+	return ip, nil
 }

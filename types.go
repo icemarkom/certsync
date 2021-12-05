@@ -22,6 +22,7 @@ import (
 	"time"
 )
 
+// Const ...
 const (
 	DefaultPort        = 15000
 	DefaultCertFile    = "cert.pem"
@@ -35,12 +36,14 @@ const (
 	PEMTypePrivateKey  = "PRIVATE KEY"
 )
 
+// Resolver ...
 type Resolver interface {
 	LookupAddr(context.Context, string) ([]string, error)
 	LookupIPAddr(context.Context, string) ([]net.IPAddr, error)
 	LookupHost(context.Context, string) ([]string, error)
 }
 
+// NewConfig ...
 func NewConfig(b, v, g string) *Config {
 	return &Config{
 		CertFile:       DefaultCertFile,
@@ -57,6 +60,7 @@ func NewConfig(b, v, g string) *Config {
 	}
 }
 
+// Config ...
 type Config struct {
 	HostName                       string
 	CertFile, CertKeyFile          string
