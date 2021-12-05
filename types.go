@@ -34,6 +34,8 @@ const (
 
 	PEMTypeCertificate = "CERTIFICATE"
 	PEMTypePrivateKey  = "PRIVATE KEY"
+
+	headerXFF = "X-Forwarded-For"
 )
 
 // Resolver ...

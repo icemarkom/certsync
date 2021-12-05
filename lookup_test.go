@@ -119,11 +119,51 @@ func TestIPFromRequest(t *testing.T) {
 			want:    net.ParseIP("10.0.0.1"),
 			wantErr: false,
 		},
+		{
+			r: &http.Request{
+				RemoteAddr: "10.0.0.5:5000",
+				Header: http.Header{
+					headerXFF: {"10.0.0.1"},
+				},
+			},
+			want:    net.ParseIP("10.0.0.1"),
+			wantErr: false,
+		},
+		{
+			r: &http.Request{
+				RemoteAddr: "10.0.0.5:5000",
+				Header: http.Header{
+					headerXFF: {"10.0.0.1", "10.0.0.2", "10.0.0.3"},
+				},
+			},
+			want:    net.ParseIP("10.0.0.1"),
+			wantErr: false,
+		},
+		{
+			r: &http.Request{
+				RemoteAddr: "10.0.0.5:5000",
+				Header: http.Header{
+					headerXFF: {},
+				},
+			},
+			want:    net.ParseIP("10.0.0.5"),
+			wantErr: false,
+		},
+		{
+			r: &http.Request{
+				RemoteAddr: "10.0.0.5:5000",
+				Header: http.Header{
+					headerXFF: {"a"},
+				},
+			},
+			want:    net.ParseIP("10.0.0.5"),
+			wantErr: false,
+		},
 	}
 	for _, tc := range tests {
 		got, err := IPFromRequest(tc.r)
 		if !got.Equal(tc.want) || (err == nil && tc.wantErr) {
-			t.Errorf("IPFromRequest(%q): want: %v (got: %v), wantErr: %v (gotErr: %v)", tc.r.RemoteAddr, tc.want, got, tc.wantErr, err != nil)
+			t.Errorf("IPFromRequest(%q [XFF: %q]): want: %v (got: %v), wantErr: %v (gotErr: %v)", tc.r.RemoteAddr, tc.r.Header.Get(headerXFF), tc.want, got, tc.wantErr, err != nil)
 		}
 	}
 

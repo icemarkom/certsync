@@ -56,11 +56,12 @@ func IPFromRequest(r *http.Request) (net.IP, error) {
 	if r == nil {
 		return nil, fmt.Errorf("requestor host:port is empty")
 	}
-	if r.Header.Get("X-Forwarded-For") != "" {
-		ip := net.ParseIP(strings.Split(r.Header.Get("X-Forwarded-For"), " ")[0])
-		return ip, nil
+	if r.Header.Get(headerXFF) != "" {
+		ip := net.ParseIP(strings.Split(r.Header.Get(headerXFF), " ")[0])
+		if ip != nil {
+			return ip, nil
+		}
 	}
-
 	h, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {
 		return nil, fmt.Errorf("invalid requestor host:port combination: %v", err)
