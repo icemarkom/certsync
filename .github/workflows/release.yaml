@@ -26,6 +26,8 @@ jobs:
           distribution: goreleaser
           version: latest
           args: release --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v4
         with:
