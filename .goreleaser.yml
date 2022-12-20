@@ -15,11 +15,11 @@ builds:
     targets:
       - linux_amd64
       - linux_arm64
-      - linux_arm
-      - darwin_amd64
-      - darwin_arm64
-      - windows_amd64
-      - windows_386
+#      - linux_arm
+#      - darwin_amd64
+#      - darwin_arm64
+#      - windows_amd64
+#      - windows_386
   - id: client
     main: ./client
     binary: certsync_client
@@ -32,11 +32,11 @@ builds:
     targets:
       - linux_amd64
       - linux_arm64
-      - linux_arm
-      - darwin_amd64
-      - darwin_arm64
-      - windows_amd64
-      - windows_386
+#      - linux_arm
+#      - darwin_amd64
+#      - darwin_arm64
+#      - windows_amd64
+#      - windows_386
 
 universal_binaries:
   - id: server
@@ -49,27 +49,27 @@ archives:
     name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     builds:
       - server
-    format_overrides:
-      - goos: windows
-        format: zip
-      - goos: darwin
-        format: zip
-    replacements:
-      arm: armhf
-      darwin: macOS
+#    format_overrides:
+#      - goos: windows
+#        format: zip
+#      - goos: darwin
+#        format: zip
+#    replacements:
+#      arm: armhf
+#      darwin: macOS
   
   - id: client
     name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     builds:
       - client
-    format_overrides:
-      - goos: windows
-        format: zip
-      - goos: darwin
-        format: zip
-    replacements:
-      arm: armhf
-      darwin: macOS
+#    format_overrides:
+#      - goos: windows
+#        format: zip
+#      - goos: darwin
+#        format: zip
+#    replacements:
+#      arm: armhf
+#      darwin: macOS
   
 nfpms:
   - id: server
@@ -81,8 +81,8 @@ nfpms:
       - server
     formats:
       - deb
-    replacements:
-      arm: armhf
+#    replacements:
+#      arm: armhf
   - id: client
     maintainer: "Marko Milivojevic <markom@gmail.com>"
     package_name: certsync_client
@@ -92,8 +92,8 @@ nfpms:
       - client
     formats:
       - deb
-    replacements:
-      arm: armhf
+#    replacements:
+#      arm: armhf
 
 checksum:
   name_template: 'checksums.txt'
