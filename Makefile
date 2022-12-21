@@ -1,7 +1,6 @@
 version=`date "+%Y%m%d%H%M%S"`
 gitcommit=`git rev-parse --short HEAD`
 
-# Does not make Docker -- use docker_all
 all: client server
 
 #
@@ -18,29 +17,3 @@ server: deps *.go server/*
 		--ldflags "-s -w -X main.version=${version} -X main.gitCommit=${gitcommit} -X main.binaryName=certsync_server" \
 		-o bin/certsync_server \
 		server/*.go
-
-#
-# Docker
-#
-docker_all: docker_server docker_client
-
-docker_server:
-	docker buildx build \
-		--target server \
-		-t icemarkom/certsync:server \
-		--platform=linux/amd64,linux/arm64,linux/arm \
-		--push \
-		.
-
-docker_client:
-	docker buildx build \
-		--target client \
-		-t icemarkom/certsync:client \
-		--platform=linux/amd64,linux/arm64,linux/arm \
-		--push \
-		.
-
-deps: Makefile go.mod
-
-test:
-	go test ./...
