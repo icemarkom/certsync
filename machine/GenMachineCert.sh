@@ -1,11 +1,23 @@
 #!/bin/bash
 #
-# This script generates basic "machine" certificate for the FQDN.
+# This script example generates basic "machine" certificate for the FQDN.
 #
 
-CAPath="/root/ca"
-CACert="${CAPath}/rzCA.crt"
-CAKey="${CAPath}/rzCA.key"
+###############################################################################
+#
+# SET THESE VALUES BEFORE USING THE SCRIPT
+#
+CAPath="/etc/ssl/CA"
+CACert="${CAPath}/CA.pem"
+CAKey="${CAPath}/CA.key"
+
+CACountry="US"
+CAState="California"
+CACity="Los Gatos"
+CAOrg="Rezidencija"
+CAUnit="Machine"
+###############################################################################
+
 OPENSSL="/usr/bin/openssl"
 LOOKUPTOOL="/usr/bin/host"
 MKTEMP="/bin/mktemp"
@@ -38,11 +50,11 @@ x509_extensions    = x509_ext
 prompt             = no
 
 [ req_distinguished_name ]
-C                  = US
-ST                 = California
-L                  = Los Gatos
-O                  = Rezidencija
-OU                 = Machine
+C                  = ${CACountry}
+ST                 = ${CAState}
+L                  = ${CACity}
+O                  = ${CAOrg}
+OU                 = ${CAUnit}
 CN                 = ${MachineName}
 
 [ x509_ext ]
