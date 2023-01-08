@@ -76,7 +76,7 @@ nfpms:
     maintainer: "Marko Milivojevic <markom@gmail.com>"
     package_name: certsync_server
     description: "CertSync server. See: https://github.com/icemarkom/certsync"
-    bindir: /usr/local/sbin
+    bindir: /usr/sbin
     builds:
       - server
     formats:
@@ -87,7 +87,7 @@ nfpms:
     maintainer: "Marko Milivojevic <markom@gmail.com>"
     package_name: certsync_client
     description: "CertSync client. See: https://github.com/icemarkom/certsync"
-    bindir: /usr/local/bin
+    bindir: /usr/bin
     builds:
       - client
     formats:
