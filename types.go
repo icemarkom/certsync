@@ -24,7 +24,7 @@ import (
 
 // Const ...
 const (
-	DefaultPort        = 15000
+	DefaultPort        = 82 // XFER; mostly unused.
 	DefaultCertFile    = "cert.pem"
 	DefaultKeyFile     = "key.pem"
 	DefaultCACertFile  = "ca.pem"
