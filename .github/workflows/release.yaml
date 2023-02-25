@@ -13,15 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@latest
         with:
           fetch-depth: 0
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@latest
         with:
-          go-version: 1.17
+          go-version: 1.20
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@latest
         with:
           distribution: goreleaser
           version: latest
@@ -29,7 +29,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v4
+        uses: crazy-max/ghaction-import-gpg@latest
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
@@ -44,7 +44,7 @@ jobs:
           gpg -abs -o Release.gpg Release &&
           gpg --clearsign -o InRelease Release
       - name: Upload Packages and Release manually
-        uses: alexellis/upload-assets@0.2.2
+        uses: alexellis/upload-assets@latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
