@@ -58,6 +58,11 @@ func init() {
 
 	flag.Parse()
 
+	if len(os.Args) == 1 {
+		common.ProgramUsage(cfg)
+		os.Exit(0)
+	}
+	
 	if v {
 		common.ProgramVersion(cfg)
 		os.Exit(0)
