@@ -28,6 +28,7 @@ const (
 	DefaultCertFile    = "cert.pem"
 	DefaultKeyFile     = "key.pem"
 	DefaultCACertFile  = "ca.pem"
+	DefaultDryRun      = true
 	DefaultNewCertFile = "newcert.pem"
 	DefaultNewKeyFile  = "newkey.pem"
 	DefaultTimeout     = 30
@@ -53,6 +54,7 @@ func NewConfig(b, v, g string) *Config {
 		NewCertFile:    DefaultNewCertFile,
 		NewCertKeyFile: DefaultNewKeyFile,
 		CACertFile:     DefaultCACertFile,
+		DryRun:         DefaultDryRun,
 		Port:           DefaultPort,
 		Timeout:        DefaultTimeout * time.Second,
 		BinaryName:     b,
@@ -68,6 +70,7 @@ type Config struct {
 	CertFile, CertKeyFile          string
 	NewCertFile, NewCertKeyFile    string
 	CACertFile                     string
+	DryRun                         bool
 	Port                           int
 	Timeout                        time.Duration
 	BinaryName, Version, GitCommit string

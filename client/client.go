@@ -22,7 +22,7 @@ import (
 	"encoding/pem"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"math"
 	"net/http"
@@ -51,6 +51,7 @@ func init() {
 	flag.IntVar(&cfg.Port, "port", cs.DefaultPort, "Server port")
 	flag.StringVar(&cfg.CertFile, "clientcert", cs.DefaultCertFile, "Client certificate file")
 	flag.StringVar(&cfg.CertKeyFile, "clientkey", cs.DefaultKeyFile, "Client private key file")
+	flag.BoolVar(&cfg.DryRun, "dry_run", true, "Dry run - don't connect to the server")
 	flag.StringVar(&cfg.NewCertFile, "newcert", cs.DefaultNewCertFile, "New certificate file")
 	flag.StringVar(&cfg.NewCertKeyFile, "newkey", cs.DefaultNewKeyFile, "New key file")
 	flag.DurationVar(&cfg.Timeout, "timeout", cs.DefaultTimeout*time.Second, "Server timeout in seconds")
@@ -62,7 +63,7 @@ func init() {
 		common.ProgramUsage(cfg)
 		os.Exit(0)
 	}
-	
+
 	if v {
 		common.ProgramVersion(cfg)
 		os.Exit(0)
@@ -174,6 +175,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("Could not setup HTTPS client: %v", err)
 	}
+	if cfg.DryRun {
+		log.Println("Dry run - not connecting to the server.")
+		os.Exit(0)
+	}
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://%s:%d", cfg.HostName, cfg.Port), bytes.NewBuffer([]byte{}))
 	if err != nil {
 		log.Fatalf("Cannot create HTTPS request: %v", err)
@@ -185,7 +190,7 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalf("Error reading response body: %v", err)
 	}
