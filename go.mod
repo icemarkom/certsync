@@ -2,7 +2,7 @@ module github.com/icemarkom/certsync
 
 go 1.24.1
 
-require github.com/foxcpp/go-mockdns v1.1.0
+require github.com/foxcpp/go-mockdns v1.2.0
 
 require (
 	github.com/miekg/dns v1.1.63 // indirect
