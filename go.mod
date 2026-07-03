@@ -1,14 +1,14 @@
 module github.com/icemarkom/certsync
 
-go 1.24.1
+go 1.25.0
 
 require github.com/foxcpp/go-mockdns v1.2.0
 
 require (
 	github.com/miekg/dns v1.1.63 // indirect
 	golang.org/x/mod v0.23.0 // indirect
-	golang.org/x/net v0.38.0 // indirect
+	golang.org/x/net v0.55.0 // indirect
 	golang.org/x/sync v0.11.0 // indirect
-	golang.org/x/sys v0.31.0 // indirect
+	golang.org/x/sys v0.45.0 // indirect
 	golang.org/x/tools v0.30.0 // indirect
 )
